@@ -13,6 +13,7 @@
     "axios": "^1.7.9",
     "express": "^4.21.2",
     "http": "^0.0.1-security",
+    "mongoose": "^8.9.5",
     "socket.io": "^2.3.0"
   }
 }
