@@ -25,7 +25,12 @@ app.use(express.json()); // whatever data is stored/ received is in the json for
 // FRONTEND -> MIDDLEWARE -> BACKEND. MIDDLEWARE IS USED FOR MANIPULATING THE DATA
 
 // CONNECT TO MONGODB
-
+const DB = "mongodb+srv://ayush91003:Ayush123@cluster0.rmic8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+mongoose.connect(DB).then(() => {
+    console.log("Connection successful!");
+}).catch((e) => {
+    console.log(e);
+})
 
 // LISTEN TO SERVER
 server.listen(port, "0.0.0.0", () => {
