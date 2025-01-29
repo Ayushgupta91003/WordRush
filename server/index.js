@@ -36,9 +36,9 @@ mongoose.connect(DB).then(() => {
 
 io.on("connection", (socket) => {
     console.log(socket.id);
-    socket.on('test',(data)=>{
-        console.log(data);
-    })
+    // socket.on('test',(data)=>{
+    //     console.log(data);
+    // })
 })
 
 
