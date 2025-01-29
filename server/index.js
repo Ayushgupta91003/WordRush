@@ -18,6 +18,7 @@ const mongoose = require('mongoose');
 const app = express();
 const port = process.env.PORT || 3000;
 var server = http.createServer(app);
+var io = require('socket.io')(server);
 
 // middle ware
 app.use(express.json()); // whatever data is stored/ received is in the json format.
@@ -31,6 +32,15 @@ mongoose.connect(DB).then(() => {
 }).catch((e) => {
     console.log(e);
 })
+
+
+io.on("connection", (socket) => {
+    console.log(socket.id);
+    socket.on('test',(data)=>{
+        console.log(data);
+    })
+})
+
 
 // LISTEN TO SERVER
 server.listen(port, "0.0.0.0", () => {
