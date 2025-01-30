@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wordrush/providers/client_state_provider.dart';
 import 'package:wordrush/providers/game_state_provider.dart';
 import 'package:wordrush/screens/create_room_screen.dart';
 import 'package:wordrush/screens/game_screen.dart';
@@ -18,6 +19,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (context) => GameStateProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ClientStateProvider(),
         ),
       ],
       child: MaterialApp(

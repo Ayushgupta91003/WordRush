@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wordrush/providers/client_state_provider.dart';
 import 'package:wordrush/providers/game_state_provider.dart';
 // import 'package:provider/provider.dart';
 // import 'package:wordrush/providers/client_state_provider.dart';
@@ -78,13 +79,13 @@ class SocketMethods {
     );
   }
 
-  // updateTimer(BuildContext context) {
-  //   final clientStateProvider =
-  //       Provider.of<ClientStateProvider>(context, listen: false);
-  //   _socketClient.on('timer', (data) {
-  //     clientStateProvider.setClientState(data);
-  //   });
-  // }
+  updateTimer(BuildContext context) {
+    final clientStateProvider =
+        Provider.of<ClientStateProvider>(context, listen: false);
+    _socketClient.on('timer', (data) {
+      clientStateProvider.setClientState(data);
+    });
+  }
 
   // updateGame(BuildContext context) {
   //   _socketClient.on('updateGame', (data) {
