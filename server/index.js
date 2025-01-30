@@ -113,7 +113,7 @@ io.on("connection", (socket) => {
           // console.log('game START!');
           game.isJoin = false;
           game = await game.save();
-          io.to(gameId).emit('updateGame', game);
+          io.to(gameID).emit('updateGame', game);
           startGameClock(gameID);
           clearInterval(timerId);
         }
@@ -123,10 +123,36 @@ io.on("connection", (socket) => {
   })
 })
 
-// const startGameClock = async (gameID) =>{
-//   let game = await Game.findById(gameID);
-// }
+const startGameClock = async (gameID) => {
+  let game = await Game.findById(gameID);
+  game.startTime = new Date().getTime();
+  game = await game.save();
 
+  let time = 120;
+
+  let timerId = setInterval((function gameIntervalFunc() {
+    // if(time>=0){
+    //   const timeFormat = calculateTime(time);
+    // }
+    if (time >= 0) {
+      const timeFormat = calculateTime(time);
+      io.to(gameID).emit("timer", {
+        countDown: timeFormat,
+        msg: "Time Remaining",
+      });
+      console.log(time);
+      time--;
+    }
+    return gameIntervalFunc;
+  })(), 1000);
+}
+
+
+const calculateTime = (time) => {
+  let min = Math.floor(time / 60);
+  let sec = time % 60;
+  return `${min}:${sec < 10 ? "0" + sec : sec}`;
+};
 
 // LISTEN TO SERVER
 server.listen(port, "0.0.0.0", () => {
