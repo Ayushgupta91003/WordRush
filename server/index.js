@@ -56,8 +56,8 @@ io.on("connection", (socket) => {
             game.players.push(player);
             game = await game.save();
 
-            // const gameId = game._id.toString();
-            // socket.join(gameId);
+            const gameId = game._id.toString();
+            socket.join(gameId);
 
         } catch (e) {
             console.log(e);
