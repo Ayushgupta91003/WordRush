@@ -1,12 +1,14 @@
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
+// final String Uri = 'http://10.0.5.42:3000';
+final String Uri = 'http://10.0.5.42:3000';
+
 class SocketClient {
   IO.Socket? socket;
   static SocketClient? _instance;
 
   SocketClient._internal() {
-    socket =
-        IO.io('http://10.0.5.42:3000', <String, dynamic>{
+    socket = IO.io(Uri, <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
     });
