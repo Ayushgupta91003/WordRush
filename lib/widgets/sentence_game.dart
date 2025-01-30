@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:wordrush/providers/game_state_provider.dart';
 import 'package:wordrush/utils/socket_client.dart';
 import 'package:wordrush/utils/socket_methods.dart';
+import 'package:wordrush/widgets/scoreboard.dart';
 
 class SentenceGame extends StatefulWidget {
   const SentenceGame({super.key});
@@ -41,21 +42,47 @@ class _SentenceGameState extends State<SentenceGame> {
     );
   }
 
+  Widget getCurrentWord(words, player) {
+    return Text(
+      words[player['currentWordIndex']],
+      style: const TextStyle(
+        decoration: TextDecoration.underline,
+        fontSize: 30,
+      ),
+    );
+  }
+
+  Widget getWordsToBeTyped(words, player) {
+    var tempWords = words.sublist(player['currentWordIndex'] + 1, words.length);
+    String wordstoBeTyped = tempWords.join(' ');
+    return Text(
+      wordstoBeTyped,
+      style: const TextStyle(
+        fontSize: 30,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final game = Provider.of<GameStateProvider>(context);
     findPlayerMe(game);
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: Wrap(
-        textDirection: TextDirection.ltr,
-        children: [
-          getTypedWords(game.gameState['words'], playerMe),
-          
-        ],
-      ),
-    );
+
+    if (game.gameState['words'].length > playerMe['currentWordIndex']) {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: Wrap(
+          textDirection: TextDirection.ltr,
+          children: [
+            getTypedWords(game.gameState['words'], playerMe),
+            getCurrentWord(game.gameState['words'], playerMe),
+            getWordsToBeTyped(game.gameState['words'], playerMe),
+          ],
+        ),
+      );
+    }
+    // return Container(child: Text('score pls'),);
+    return const Scoreboard();
 
     // typed words
     // current word

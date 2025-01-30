@@ -106,7 +106,14 @@ io.on("connection", (socket) => {
         if (player.currentWordIndex !== game.words.length) {
           game = await game.save();
           io.to(gameID).emit("updateGame", game);
-        } 
+        } else {
+          let endTime = new Date().getTime();
+          let { startTime } = game;
+          player.WPM = calculateWPM(endTime, startTime, player);
+          game = await game.save();
+          socket.emit("done");
+          io.to(gameID).emit("updateGame", game);
+        }
       }
 
     }
@@ -143,6 +150,8 @@ io.on("connection", (socket) => {
   })
 })
 
+
+
 const startGameClock = async (gameID) => {
   let game = await Game.findById(gameID);
   game.startTime = new Date().getTime();
@@ -150,28 +159,96 @@ const startGameClock = async (gameID) => {
 
   let time = 120;
 
-  let timerId = setInterval((function gameIntervalFunc() {
-    // if(time>=0){
-    //   const timeFormat = calculateTime(time);
-    // }
-    if (time >= 0) {
-      const timeFormat = calculateTime(time);
-      io.to(gameID).emit("timer", {
-        countDown: timeFormat,
-        msg: "Time Remaining",
-      });
-      console.log(time);
-      time--;
-    }
-    return gameIntervalFunc;
-  })(), 1000);
-}
+  let timerId = setInterval(
+    (function gameIntervalFunc() {
+      if (time >= 0) {
+        const timeFormat = calculateTime(time);
+        io.to(gameID).emit("timer", {
+          countDown: timeFormat,
+          msg: "Time Remaining",
+        });
+        console.log(time);
+        time--;
+      } else {
+        (async () => {
+          try {
+            let endTime = new Date().getTime();
+            let game = await Game.findById(gameID);
+            let { startTime } = game;
+            game.isOver = true;
+            game.players.forEach((player, index) => {
+              if (player.WPM === -1) {
+                game.players[index].WPM = calculateWPM(
+                  endTime,
+                  startTime,
+                  player
+                );
+              }
+            });
+            game = await game.save();
+            io.to(gameID).emit("updateGame", game);
+            // socket.emit("done");
+            clearInterval(timerId);
+          } catch (e) {
+            console.log(e);
+          }
+        })();
+      }
+      return gameIntervalFunc;
+    })(),
+    1000
+  );
+};
+
+
+
+
+
+
+// const startGameClock = async (gameID) => {
+//   let game = await Game.findById(gameID);
+//   game.startTime = new Date().getTime();
+//   game = await game.save();
+
+//   let time = 120;
+
+//   let timerId = setInterval((function gameIntervalFunc() {
+//     // if(time>=0){
+//     //   const timeFormat = calculateTime(time);
+//     // }
+//     if (time >= 0) {
+//       const timeFormat = calculateTime(time);
+//       io.to(gameID).emit("timer", {
+//         countDown: timeFormat,
+//         msg: "Time Remaining",
+//       });
+//       console.log(time);
+//       time--;
+//     } else {
+//       let endTime = new Date().getTime();
+//           let { startTime } = game;
+//           player.WPM = calculateWPM(endTime, startTime, player);
+//           game = await game.save();
+//           socket.emit("done");
+//           io.to(gameID).emit("updateGame", game);
+//     }
+//     return gameIntervalFunc;
+//   })(), 1000);
+// }
 
 
 const calculateTime = (time) => {
   let min = Math.floor(time / 60);
   let sec = time % 60;
   return `${min}:${sec < 10 ? "0" + sec : sec}`;
+};
+
+const calculateWPM = (endTime, startTime, player) => {
+  const timeTakenInSec = (endTime - startTime) / 1000;
+  const timeTaken = timeTakenInSec / 60;
+  let wordsTyped = player.currentWordIndex;
+  const WPM = Math.floor(wordsTyped / timeTaken);
+  return WPM;
 };
 
 // LISTEN TO SERVER

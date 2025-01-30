@@ -22,6 +22,7 @@ class _GameScreenState extends State<GameScreen> {
     super.initState();
     _socketMethods.updateTimer(context);
     _socketMethods.updateGame(context);
+    _socketMethods.gameFinishedListener();
   }
 
   @override
@@ -47,51 +48,53 @@ class _GameScreenState extends State<GameScreen> {
                     const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
               const SentenceGame(),
-              game.gameState['isJoin'] ?  ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 600),
-                child: TextField(
-                  readOnly: true,
-                  onTap: () { 
-                    Clipboard.setData(ClipboardData(
-                      text: game.gameState['id'],
-                    )).then((_) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Game code copied to Clipboard!',
+              game.gameState['isJoin']
+                  ? ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 600),
+                      child: TextField(
+                        readOnly: true,
+                        onTap: () {
+                          Clipboard.setData(ClipboardData(
+                            text: game.gameState['id'],
+                          )).then((_) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Game code copied to Clipboard!',
+                                ),
+                              ),
+                            );
+                          });
+                        },
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: const BorderSide(
+                              color: Colors.transparent,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: const BorderSide(
+                              color: Colors.transparent,
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          fillColor: const Color(
+                            0xffF5F5FA,
+                          ),
+                          hintText: 'Click to Copy Game Code',
+                          hintStyle: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
-                      );
-                    });
-                  },
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: const BorderSide(
-                        color: Colors.transparent,
                       ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: const BorderSide(
-                        color: Colors.transparent,
-                      ),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
-                    ),
-                    fillColor: const Color(
-                      0xffF5F5FA,
-                    ),
-                    hintText: 'Click to Copy Game Code',
-                    hintStyle: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ),
-              ) : Container(),
+                    )
+                  : Container(),
             ],
           ),
         ),
