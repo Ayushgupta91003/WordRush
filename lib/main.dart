@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wordrush/providers/client_state_provider.dart';
 import 'package:wordrush/providers/game_state_provider.dart';
 import 'package:wordrush/screens/create_room_screen.dart';
 import 'package:wordrush/screens/game_screen.dart';
@@ -19,9 +20,12 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => GameStateProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => ClientStateProvider(),
+        ),
       ],
       child: MaterialApp(
-        debugShowCheckedModeBanner: false,
+        debugShowCheckedModeBanner: false, 
         title: 'Word Rush',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
