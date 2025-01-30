@@ -5,6 +5,7 @@ import 'package:wordrush/providers/client_state_provider.dart';
 import 'package:wordrush/providers/game_state_provider.dart';
 import 'package:wordrush/utils/socket_methods.dart';
 import 'package:wordrush/widgets/game_text_field.dart';
+import 'package:wordrush/widgets/sentence_game.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -45,48 +46,52 @@ class _GameScreenState extends State<GameScreen> {
                 style:
                     const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
-              TextField(
-                readOnly: true,
-                onTap: () {
-                  Clipboard.setData(ClipboardData(
-                    text: game.gameState['id'],
-                  )).then((_) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Game code copied to Clipboard!',
+              const SentenceGame(),
+              game.gameState['isJoin'] ?  ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
+                child: TextField(
+                  readOnly: true,
+                  onTap: () { 
+                    Clipboard.setData(ClipboardData(
+                      text: game.gameState['id'],
+                    )).then((_) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Game code copied to Clipboard!',
+                          ),
                         ),
+                      );
+                    });
+                  },
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(
+                        color: Colors.transparent,
                       ),
-                    );
-                  });
-                },
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(
-                      color: Colors.transparent,
                     ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(
-                      color: Colors.transparent,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(
+                        color: Colors.transparent,
+                      ),
                     ),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 14,
-                  ),
-                  fillColor: const Color(
-                    0xffF5F5FA,
-                  ),
-                  hintText: 'Click to Copy Game Code',
-                  hintStyle: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
+                    fillColor: const Color(
+                      0xffF5F5FA,
+                    ),
+                    hintText: 'Click to Copy Game Code',
+                    hintStyle: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                 ),
-              ),
+              ) : Container(),
             ],
           ),
         ),
