@@ -79,7 +79,6 @@ class SocketMethods {
     );
   }
 
-
   // updateTimer(BuildContext context){
 
   // }
