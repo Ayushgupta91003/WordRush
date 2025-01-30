@@ -58,11 +58,40 @@ io.on("connection", (socket) => {
 
             const gameId = game._id.toString();
             socket.join(gameId);
-
+            io.to(gameId).emit('updateGame', game);
         } catch (e) {
             console.log(e);
         }
     })
+
+    socket.on("join-game", async ({ nickname, gameId }) => {
+        try {
+          if (!gameId.match(/^[0-9a-fA-F]{24}$/)) {
+            socket.emit("notCorrectGame", "Please enter a valid game ID");
+            return;
+          }
+          let game = await Game.findById(gameId);
+    
+          if (game.isJoin) {
+            const id = game._id.toString();
+            let player = {
+              nickname,
+              socketID: socket.id,
+            };
+            socket.join(id);
+            game.players.push(player);
+            game = await game.save();
+            io.to(gameId).emit("updateGame", game);
+          } else {
+            socket.emit(
+              "notCorrectGame",
+              "The game is in progress, please try again later!"
+            );
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      });
 
 
 })
