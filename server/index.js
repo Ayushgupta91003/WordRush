@@ -13,6 +13,8 @@
 const express = require('express');
 const http = require('http');
 const mongoose = require('mongoose');
+const Game = require("./models/Game");  // Game.js bhi chalega...
+const getSentence = require('./api/getSentence');
 
 // CREATING A SERVER
 const app = express();
@@ -35,19 +37,33 @@ mongoose.connect(DB).then(() => {
 
 
 io.on("connection", (socket) => {
-    console.log(socket.id);
+    // console.log(socket.id);
     // socket.on('test',(data)=>{
     //     console.log(data);
     // })
 
-    socket.on('create-game', async({nickname}) => {
-        try{
+    socket.on('create-game', async ({ nickname }) => {
+        try {
+            let game = new Game();
+            const sentence = await getSentence();
+            game.words = sentence
+            let player = {
+                socketID : socket.id,
+                // nickname = nickname;
+                nickname,
+                isPartyLeader: true,
+            };
+            game.players.push(player);
+            game = await game.save();
 
-        } catch(e){
+            // const gameId = game._id.toString();
+            // socket.join(gameId);
+
+        } catch (e) {
             console.log(e);
         }
     })
-    
+
 
 })
 
