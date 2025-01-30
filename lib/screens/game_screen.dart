@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:wordrush/providers/client_state_provider.dart';
 import 'package:wordrush/providers/game_state_provider.dart';
@@ -43,6 +44,48 @@ class _GameScreenState extends State<GameScreen> {
                     .toString(),
                 style:
                     const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              ),
+              TextField(
+                readOnly: true,
+                onTap: () {
+                  Clipboard.setData(ClipboardData(
+                    text: game.gameState['id'],
+                  )).then((_) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Game code copied to Clipboard!',
+                        ),
+                      ),
+                    );
+                  });
+                },
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(
+                      color: Colors.transparent,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(
+                      color: Colors.transparent,
+                    ),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
+                  fillColor: const Color(
+                    0xffF5F5FA,
+                  ),
+                  hintText: 'Click to Copy Game Code',
+                  hintStyle: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
               ),
             ],
           ),
