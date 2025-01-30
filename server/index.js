@@ -99,79 +99,33 @@ io.on("connection", (socket) => {
     let countDown = 5;
     let game = await Game.findById(gameID);
     let player = game.players.id(playerId);
-    
-    if(player.isPartyLeader){
+
+    if (player.isPartyLeader) {
       let timerId = setInterval(async () => {
-        if(countDown>=0){
+        if (countDown >= 0) {
           io.to(gameID).emit('timer', {
-            countDown, 
+            countDown,
             msg: 'Game Starting',
           })
           console.log(countDown);
           countDown--;
         } else {
           // console.log('game START!');
+          game.isJoin = false;
+          game = await game.save();
+          io.to(gameId).emit('updateGame', game);
+          startGameClock(gameID);
           clearInterval(timerId);
         }
       }, 1000)
     }
 
   })
-
-
-  // socket.on('timer', async ({ playerId, gameID }) => {
-  //   try {
-  //     console.log(`Timer started for GameID: ${gameID}, PlayerID: ${playerId}`);
-  
-  //     // Find game
-  //     let game = await Game.findById(gameID);
-  //     if (!game) {
-  //       console.error("❌ Game not found!");
-  //       return;
-  //     }
-  
-  //     // Ensure game has players
-  //     if (!game.players || game.players.length === 0) {
-  //       console.error("❌ No players found in this game!");
-  //       return;
-  //     }
-  
-  //     // Find player
-  //     let player = game.players.find(p => p._id.toString() === playerId);
-  //     if (!player) {
-  //       console.error("❌ Player not found in game!");
-  //       return;
-  //     }
-  
-  //     // Ensure player is the party leader
-  //     if (!player.isPartyLeader) {
-  //       console.error("❌ Player is not the party leader!");
-  //       return;
-  //     }
-  
-  //     // Start countdown timer
-  //     let countDown = 5;
-  //     let timerId = setInterval(async () => {
-  //       if (countDown >= 0) {
-  //         io.to(gameID).emit('timer', {
-  //           countDown,
-  //           msg: 'Game Starting',
-  //         });
-  //         console.log(countDown);
-  //         countDown--;
-  //       } else {
-  //         clearInterval(timerId);
-  //       }
-  //     }, 1000);
-      
-  //   } catch (error) {
-  //     console.error("❌ Error in timer event:", error);
-  //   }
-  // });
-  
-
-
 })
+
+// const startGameClock = async (gameID) =>{
+//   let game = await Game.findById(gameID);
+// }
 
 
 // LISTEN TO SERVER
