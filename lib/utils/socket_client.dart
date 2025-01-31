@@ -7,7 +7,8 @@ class SocketClient {
   static SocketClient? _instance;
 
   SocketClient._internal() {
-    socket = IO.io('http://10.0.5.42:3000', <String, dynamic>{
+    // socket = IO.io('http://10.0.5.42:3000', <String, dynamic>{
+    socket = IO.io('https://wordrushserver.onrender.com', <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
     });
